@@ -1,3 +1,6 @@
+import java.awt.*;
+import java.util.Scanner;
+
 /**
  * Created by Robert Burek
  */
@@ -6,7 +9,10 @@ public class Main {
 
         System.out.println("Cześć Robert!!!");
         while (true){
-            System.out.println("Podaj liczbę do obliczenia pierwiastka:  ");
+            System.out.print("Podaj liczbę do obliczenia pierwiastka:  ");
+            Scanner scanner = new Scanner((System.in));
+            int liczba = scanner.nextInt();
+            System.out.println("Pierwiastek z tej liczby to: " + Math.sqrt((double)liczba));
         }
     }
 }
