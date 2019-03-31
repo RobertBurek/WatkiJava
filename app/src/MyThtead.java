@@ -11,9 +11,7 @@ public class MyThtead extends Thread{
 
     @Override
     public void run(){
-        System.out.println("Część kodu wykonywana w innym wątku.");
-        System.out.println("Nazwa tego wątku : " + Thread.currentThread().getName());
-        IntStream.rangeClosed(1,20).forEach(System.out::println);
+        IntStream.rangeClosed(1,20).forEach( i -> System.out.println(i + " | wątek - " + Thread.currentThread().getName()));
 
     }
 }
