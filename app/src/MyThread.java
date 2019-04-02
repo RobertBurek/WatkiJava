@@ -12,7 +12,7 @@ public class MyThread extends Thread{
     @Override
     public void run(){
 //        IntStream.rangeClosed(1,20).forEach( i ->
-                System.out.println("Wykonany wątek (theard) - " + Thread.currentThread().getName());
+                System.out.println("Wykonany wątek (theard) : " + Thread.currentThread().getName());
 
     }
 }
