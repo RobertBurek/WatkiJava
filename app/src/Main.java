@@ -5,35 +5,8 @@ import java.util.ArrayList;
  */
 public class Main {
 
-     public static String encode(String text, int shift){
-        ArrayList lista = new ArrayList();
-        final String ALFABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String result = "";
-        while (shift < 0) shift+=52;
-        for (int i = 0; i < ALFABET.length(); ++i) lista.add(ALFABET.substring(i,i + 1));
-        try {
-            if (!text.isEmpty()) {
-                for (int i = 0; i < text.length(); ++i) {
-                    if (lista.indexOf(text.substring(i, i + 1)) != -1) {
-                        result += lista.get((lista.indexOf(text.substring(i, i + 1)) + shift) % 52);
-                    } else {
-                        result += text.substring(i, i + 1);
-                    }
-                }
-            } else result = "";
-            if (result.trim().length() == 0) result = "";
-        } catch (NullPointerException ex) {
-           result = "";
-        }
-     return result;
-    }
-
-
 
     public static void main(String[] args) {
-
-        System.out.println(encode("To metoda szyfrująca tekst!!!", 12));
-
 
         System.out.println("Główny wątek aplikacji : " + Thread.currentThread().getName());
 
