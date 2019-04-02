@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,37 +30,114 @@ public class Main {
         };
         */
         //Brakuje procedury uruchomienia wątków
-//------------------------------------------------------------------------------------------------------------------
+        //
+        // ------------------------------------------------------------------------------------
+//------------------------Zatrzymywanie wątków metodą join -----------------------------------
+
+//
+//        System.out.println("Główny wątek aplikacji : " + Thread.currentThread().getName());
+//
+//        Runnable countdown = () -> {
+//            try {
+//                System.out.println("Wykonywany wątek (runnable) o nazwie: " + Thread.currentThread().getName());
+//                for (int i = 1; i <= 10; ++i) {
+//                    System.out.println(i + " wątek runnable wykonywany w : " + Thread.currentThread().getName());
+//                    //    Thread.sleep(1000); // Zamiaste tego to poniżej
+//                    TimeUnit.MILLISECONDS.sleep(100);
+//                }
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        };
+//
+//        Runnable blastOff = () -> {
+//            System.out.println("Wykonywany wątek (countdown) : " + Thread.currentThread().getName());
+//            System.out.println("Blast Off !!!");
+//        };
+//
+//        Thread countdownThread = new Thread(countdown, "Countdown");
+//
+//
+//        Thread blastOffThread = new Thread(blastOff, "BlastOff");
+//        countdownThread.start();
+//        countdownThread.join(400);
+//        System.out.println("Główny wątek aplikacji cd : " + Thread.currentThread().getName());
+//        Thread.sleep(200);
+//        blastOffThread.start();
+//    }
+//--------------------------------------------------------------------------------------------------------------------
+//
+//---------------------------------------EXECUTOR WĄTKÓW -----------------------------------------------------------
+//------------------------------------- kolejka wątków za pomocą newSingleThreadExecutors ------------------------
+
+//        System.out.println("Główny wątek aplikacji : " + Thread.currentThread().getName());
+//
+//        ExecutorService executor = Executors.newSingleThreadExecutor();
+//
+//        Runnable countdown = () -> {
+//            try {
+//                System.out.println("Wykonywany wątek (runnable) o nazwie: " + Thread.currentThread().getName());
+//                for (int i = 1; i <= 10; ++i) {
+//                    System.out.println(i + " wątek runnable wykonywany w : " + Thread.currentThread().getName());
+//                    //    Thread.sleep(1000); // Zamiaste tego to poniżej
+//                    TimeUnit.MILLISECONDS.sleep(100);
+//                }
+//            } catch (InterruptedException e) {
+//                System.out.println("Tutaj przerywa działanie shutdownNow");
+//                e.printStackTrace();
+//            }
+//        };
+//
+//        Runnable blastOff = () -> {
+//            System.out.println("Wykonywany wątek (countdown) : " + Thread.currentThread().getName());
+//            System.out.println("Blast Off !!!");
+//        };
+//
+//        executor.submit(countdown);
+//        executor.submit(blastOff);
+//
+//        executor.shutdown();
+//      //  executor.shutdownNow();  //kończy natychmiast wszystko poprzez wyjatek "InterruptedException"
+//
+//
+//    }
+
+//-----------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------EXECUTOR WĄTKÓW -----------------------------------------------------------
+//------------------------------------- kolejka wątków za pomocą newSingleThreadExecutors ------------------------
 
         System.out.println("Główny wątek aplikacji : " + Thread.currentThread().getName());
 
-        Runnable countdown = () -> {
-            try {
-                System.out.println("Wykonywany wątek (runnable) o nazwie: " + Thread.currentThread().getName());
-                for (int i = 1; i <= 10; ++i) {
-                    System.out.println(i + " wątek runnable wykonywany w : " + Thread.currentThread().getName());
-                    //    Thread.sleep(1000); // Zamiaste tego to poniżej
-                    TimeUnit.MILLISECONDS.sleep(100);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    Runnable countdown = () -> {
+        try {
+            System.out.println("Wykonywany wątek (runnable) o nazwie: " + Thread.currentThread().getName());
+            for (int i = 1; i <= 10; ++i) {
+                System.out.println(i + " wątek runnable wykonywany w : " + Thread.currentThread().getName());
+                //    Thread.sleep(1000); // Zamiaste tego to poniżej
+                TimeUnit.MILLISECONDS.sleep(100);
             }
-        };
+        } catch (InterruptedException e) {
+            System.out.println("Tutaj przerywa działanie shutdownNow");
+            e.printStackTrace();
+        }
+    };
 
-        Runnable blastOff = () -> {
-            System.out.println("Wykonywany wątek (countdown) : " + Thread.currentThread().getName());
-            System.out.println("Blast Off !!!");
-        };
+    Runnable blastOff = () -> {
+        System.out.println("Wykonywany wątek (countdown) : " + Thread.currentThread().getName());
+        System.out.println("Blast Off !!!");
+    };
 
-        Thread countdownThread = new Thread(countdown, "Countdown");
+        executor.submit(countdown);
+        executor.submit(blastOff);
+
+        executor.shutdown();
+    //  executor.shutdownNow();  //kończy natychmiast wszystko poprzez wyjatek "InterruptedException"
 
 
-        Thread blastOffThread = new Thread(blastOff, "BlastOff");
-        countdownThread.start();
-        countdownThread.join(400);
-        System.out.println("Główny wątek aplikacji cd : " + Thread.currentThread().getName());
-        Thread.sleep(200);
-        blastOffThread.start();
-    }
+}
+
 
 }
