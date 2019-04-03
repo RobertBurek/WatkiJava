@@ -8,7 +8,7 @@ import java.util.concurrent.*;
 public class Main {
 
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         //1  System.out.println("Główny wątek aplikacji : " + Thread.currentThread().getName());
 //        wykonywany w wątku głónym main
@@ -163,10 +163,70 @@ public class Main {
 //---------------------------------------EXECUTOR WĄTKÓW -----------------------------------------------------------
 //------------------------------------- kolejka wątków za pomocą newScheduledThreadPool ------ScheduledExecutorService-
         // wątki są wykonywane w zadanej ilości ale można je opóżniać lu zwielokratniać   klasa ScheduledExecutorService
+//
+//        System.out.println("Główny wątek 1 aplikacji : " + Thread.currentThread().getName());
+//
+//        ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+//
+//        Runnable worker1 = () -> {
+//            try {
+//                System.out.println("Robotnik 1 - Aktualny wątek o nazwie: " + Thread.currentThread().getName());
+//                System.out.println("Ładuję butle z tlenem na wątku: " + Thread.currentThread().getName());
+//                TimeUnit.SECONDS.sleep(10);
+//                System.out.println("Załadowałem butle z tlenem na wątku: " + Thread.currentThread().getName());
+//            } catch (InterruptedException e) {
+//                System.out.println("Tutaj przerywa działanie shutdownNow");
+//                e.printStackTrace();
+//            }
+//        };
+//
+//        Runnable worker2 = () -> {
+//            try {
+//                System.out.println("Robotnik 2 - Aktualny wątek o nazwie: " + Thread.currentThread().getName());
+//                System.out.println("Ładuję zapas pożywienia na wątku: " + Thread.currentThread().getName());
+//                TimeUnit.SECONDS.sleep(5);
+//                System.out.println("Załadowałem żywność na wątku: " + Thread.currentThread().getName());
+//            } catch (InterruptedException e) {
+//                System.out.println("Tutaj przerywa działanie shutdownNow");
+//                e.printStackTrace();
+//            }
+//        };
+//
+//        Runnable worker3 = () -> {
+//            try {
+//                System.out.println("Robotnik 3 - Aktualny wątek o nazwie: " + Thread.currentThread().getName());
+//                System.out.println("Ładuję zapas paliwa na wątku: " + Thread.currentThread().getName());
+//                TimeUnit.SECONDS.sleep(2);
+//                System.out.println("załadowałem paliwo na wątku: " + Thread.currentThread().getName());
+//            } catch (InterruptedException e) {
+//                System.out.println("Tutaj przerywa działanie shutdownNow");
+//                e.printStackTrace();
+//            }
+//        };
+//
+//        executor.scheduleAtFixedRate(worker1, 10, 1, TimeUnit.SECONDS);
+//        System.out.println("Główny wątek 2 aplikacji : " + Thread.currentThread().getName());
+//        executor.scheduleAtFixedRate(worker2, 0, 3, TimeUnit.SECONDS);
+//        System.out.println("Główny wątek 3 aplikacji : " + Thread.currentThread().getName());
+//        executor.scheduleAtFixedRate(worker3, 2, 6, TimeUnit.SECONDS);
+//
+//        //   executor.shutdown();
+//        //  executor.shutdownNow();  //kończy natychmiast wszystko poprzez wyjatek "InterruptedException"
+//
+//
+//    }
+
+
+        //-----------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------EXECUTOR WĄTKÓW Callable-----------------------------------------------------
+//------------------------------------- kolejka wątków za pomocą Callable ------ScheduledExecutor--------------------
+        // wątke zwraca wartość do wykorzystania opóźniej po obiekcie klasy Future
+        // callabe wstrzymuje realizację na innych wątkach aż sam nie skończy pracy.
 
         System.out.println("Główny wątek 1 aplikacji : " + Thread.currentThread().getName());
 
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
 
         Runnable worker1 = () -> {
             try {
@@ -204,15 +264,32 @@ public class Main {
             }
         };
 
-        executor.scheduleAtFixedRate(worker1, 10, 1, TimeUnit.SECONDS);
+        //        Callable<Integer> answerToEverything = new Callable<Integer>() {
+//            @Override
+//            public Integer call() throws Exception {
+//                TimeUnit.SECONDS.sleep(10);
+//                return 45;
+//            }
+//        };    poniżej to samo ale z lambdą
+
+        Callable<Integer> answerToEverything = () -> {
+            System.out.println("Cekam 10 sek i zwracam integer 45 (callable) na wątku :" + Thread.currentThread().getName());
+            TimeUnit.SECONDS.sleep(10);
+            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
+            return 45;
+        };
+
+        executor.submit(worker3);
+        Future<Integer> result = executor.submit(answerToEverything);
+        Integer przekazana = result.get();
+        System.out.println("Zwrócona wartość z wątku callable wynisi: " + przekazana);
         System.out.println("Główny wątek 2 aplikacji : " + Thread.currentThread().getName());
-        executor.scheduleAtFixedRate(worker2, 0, 3, TimeUnit.SECONDS);
+        executor.submit(worker2);
         System.out.println("Główny wątek 3 aplikacji : " + Thread.currentThread().getName());
-        executor.scheduleAtFixedRate(worker3, 2, 6, TimeUnit.SECONDS);
+        executor.submit(worker3);
 
-        //   executor.shutdown();
+        executor.shutdown();
         //  executor.shutdownNow();  //kończy natychmiast wszystko poprzez wyjatek "InterruptedException"
-
 
     }
 
