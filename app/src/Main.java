@@ -1,9 +1,6 @@
 import java.util.ArrayList;
 import java.util.TreeMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Created by Robert Burek
@@ -169,56 +166,55 @@ public class Main {
 
         System.out.println("Główny wątek 1 aplikacji : " + Thread.currentThread().getName());
 
-    ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
 
-    Runnable worker1 = () -> {
-        try {
-            System.out.println("Robotnik 1 - Aktualny wątek o nazwie: " + Thread.currentThread().getName());
-            System.out.println("Ładuję butle z tlenem na wątku: " + Thread.currentThread().getName());
-            TimeUnit.SECONDS.sleep(10);
-            System.out.println("Załadowałem butle z tlenem na wątku: " + Thread.currentThread().getName());
-        } catch (InterruptedException e) {
-            System.out.println("Tutaj przerywa działanie shutdownNow");
-            e.printStackTrace();
-        }
-    };
+        Runnable worker1 = () -> {
+            try {
+                System.out.println("Robotnik 1 - Aktualny wątek o nazwie: " + Thread.currentThread().getName());
+                System.out.println("Ładuję butle z tlenem na wątku: " + Thread.currentThread().getName());
+                TimeUnit.SECONDS.sleep(10);
+                System.out.println("Załadowałem butle z tlenem na wątku: " + Thread.currentThread().getName());
+            } catch (InterruptedException e) {
+                System.out.println("Tutaj przerywa działanie shutdownNow");
+                e.printStackTrace();
+            }
+        };
 
-    Runnable worker2 = () -> {
-        try {
-            System.out.println("Robotnik 2 - Aktualny wątek o nazwie: " + Thread.currentThread().getName());
-            System.out.println("Ładuję zapas pożywienia na wątku: " + Thread.currentThread().getName());
-            TimeUnit.SECONDS.sleep(5);
-            System.out.println("Załadowałem żywność na wątku: " + Thread.currentThread().getName());
-        } catch (InterruptedException e) {
-            System.out.println("Tutaj przerywa działanie shutdownNow");
-            e.printStackTrace();
-        }
-    };
+        Runnable worker2 = () -> {
+            try {
+                System.out.println("Robotnik 2 - Aktualny wątek o nazwie: " + Thread.currentThread().getName());
+                System.out.println("Ładuję zapas pożywienia na wątku: " + Thread.currentThread().getName());
+                TimeUnit.SECONDS.sleep(5);
+                System.out.println("Załadowałem żywność na wątku: " + Thread.currentThread().getName());
+            } catch (InterruptedException e) {
+                System.out.println("Tutaj przerywa działanie shutdownNow");
+                e.printStackTrace();
+            }
+        };
 
-    Runnable worker3 = () -> {
-        try {
-            System.out.println("Robotnik 3 - Aktualny wątek o nazwie: " + Thread.currentThread().getName());
-            System.out.println("Ładuję zapas paliwa na wątku: " + Thread.currentThread().getName());
-            TimeUnit.SECONDS.sleep(2);
-            System.out.println("załadowałem paliwo na wątku: " + Thread.currentThread().getName());
-        } catch (InterruptedException e) {
-            System.out.println("Tutaj przerywa działanie shutdownNow");
-            e.printStackTrace();
-        }
-    };
+        Runnable worker3 = () -> {
+            try {
+                System.out.println("Robotnik 3 - Aktualny wątek o nazwie: " + Thread.currentThread().getName());
+                System.out.println("Ładuję zapas paliwa na wątku: " + Thread.currentThread().getName());
+                TimeUnit.SECONDS.sleep(2);
+                System.out.println("załadowałem paliwo na wątku: " + Thread.currentThread().getName());
+            } catch (InterruptedException e) {
+                System.out.println("Tutaj przerywa działanie shutdownNow");
+                e.printStackTrace();
+            }
+        };
 
-
-        executor.scheduleAtFixedRate(worker1,10,1,TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(worker1, 10, 1, TimeUnit.SECONDS);
         System.out.println("Główny wątek 2 aplikacji : " + Thread.currentThread().getName());
-        executor.scheduleAtFixedRate(worker2,0,3,TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(worker2, 0, 3, TimeUnit.SECONDS);
         System.out.println("Główny wątek 3 aplikacji : " + Thread.currentThread().getName());
-        executor.scheduleAtFixedRate(worker3,2,6,TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(worker3, 2, 6, TimeUnit.SECONDS);
 
-    //   executor.shutdown();
-    //  executor.shutdownNow();  //kończy natychmiast wszystko poprzez wyjatek "InterruptedException"
+        //   executor.shutdown();
+        //  executor.shutdownNow();  //kończy natychmiast wszystko poprzez wyjatek "InterruptedException"
 
 
-}
+    }
 
 
 }
