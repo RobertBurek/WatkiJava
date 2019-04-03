@@ -2,6 +2,7 @@ import java.sql.Time;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 /**
  * Created by Robert Burek
@@ -332,51 +333,217 @@ public class Main {
         // przy metodzie invokeAny zwracana jest wartość wątku najszybciej wykonanaego. Nie wiadomo jak dostać się do
         // pozostałych przekazywanych danych
 
+//        long startTime = System.currentTimeMillis();
+//        LocalTime start = LocalTime.now();
+//        System.out.println(start);
+//        System.out.println("Główny wątek 1 aplikacji : " + Thread.currentThread().getName());
+//
+//        ExecutorService executor = Executors.newFixedThreadPool(5);
+//
+//
+//        //        Callable<Integer> answerToEverything = new Callable<Integer>() {
+////            @Override
+////            public Integer call() throws Exception {
+////                TimeUnit.SECONDS.sleep(10);
+////                return 45;
+////            }
+////        };    poniżej to samo ale z lambdą
+//
+//        Callable<LocalTime> Start = () -> {
+//            LocalTime start1 = LocalTime.now();
+//            System.out.println(start1);
+//            System.out.println("Cekam 10 sek i zwracam integer 45 (callable) na wątku :" + Thread.currentThread().getName());
+//            TimeUnit.SECONDS.sleep(10);
+//            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
+//            return start1;
+//        };
+//
+//        Callable<Integer> answerToEverything = () -> {
+//            System.out.println("Cekam 10 sek i zwracam integer 45 (callable) na wątku :" + Thread.currentThread().getName());
+//            TimeUnit.SECONDS.sleep(10);
+//            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
+//            return 45;
+//        };
+//
+//        Callable<Integer> anoterAnswerToEverything = () -> {
+//            System.out.println("Cekam 13 sek i zwracam integer 55 (callable2) na wątku :" + Thread.currentThread().getName());
+//            TimeUnit.SECONDS.sleep(13);
+//            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
+//            return 55;
+//        };
+//
+//        Callable<Integer> finalAnswerToEverything = () -> {
+//            System.out.println("Cekam 5 sek i zwracam integer 65 (callable2) na wątku :" + Thread.currentThread().getName());
+//            TimeUnit.SECONDS.sleep(5);
+//            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
+//            return 65;
+//        };
+///*  //invokeAll
+//        List<Callable<Integer>> callableList = Arrays.asList(answerToEverything,
+//                anoterAnswerToEverything,
+//                finalAnswerToEverything);
+//        List<Future<Integer>> futures = executor.invokeAll(callableList);
+//        for (Future<Integer> f : futures) {
+//            System.out.println(f.get());
+//        }
+//*/   //invokeAny
+//
+//        List<Callable<Integer>> callableList = Arrays.asList(answerToEverything,
+//                anoterAnswerToEverything,
+//                finalAnswerToEverything);
+//
+//        Integer result = executor.invokeAny(callableList);
+//
+//        System.out.println(result);
+//
+//
+//
+//
+///*  //tradycyjny sposób 13 s
+//        Future r1 = executor.submit(answerToEverything);
+//        Future r2 = executor.submit(anoterAnswerToEverything);
+//        Future r3 = executor.submit(finalAnswerToEverything);
+//        System.out.println(r1.get());
+//        System.out.println(r2.get());
+//        System.out.println(r3.get());
+//*/
+//
+//        long stopTime = System.currentTimeMillis();
+//        System.out.println("Czas wykonania: " + ((stopTime - startTime) / 1000) + "s");
+//        executor.shutdown();
+//        //  executor.shutdownNow();  //kończy natychmiast wszystko poprzez wyjatek "InterruptedException"
+//
+//    }
+
+
+//-------------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------EXECUTOR WĄTKÓW CompletableFuture.runAsync  i  supplyAsync--------------------
+//------------------------------------- dodatkowo przez lub nie ------ExecutorSERVICE--------------------
+        // supplyAsync  przerywa działanie trwających wątków, przekazuje dne i koniec, chyba że przepuścimy go przez
+        // executora, wtedy wszystkie wątki dobiegają do końca. (ciekawe)
+        //
+        //
+        //
+        //
+        //
+
         long startTime = System.currentTimeMillis();
         LocalTime start = LocalTime.now();
         System.out.println(start);
-        System.out.println("Główny wątek 1 aplikacji : " + Thread.currentThread().getName());
+        System.out.println("Główny wątek aplikacji  --> " + Thread.currentThread().getName());
 
-        ExecutorService executor = Executors.newFixedThreadPool(5);
+           ExecutorService executor = Executors.newFixedThreadPool(5);
 
-
-        //        Callable<Integer> answerToEverything = new Callable<Integer>() {
+//        Runnable runnable = new Runnable() {
 //            @Override
-//            public Integer call() throws Exception {
-//                TimeUnit.SECONDS.sleep(10);
-//                return 45;
+//            public void run() {
+//                // treść kodu do wykonania
 //            }
-//        };    poniżej to samo ale z lambdą
+//        };   pełna deklaracja Runnable
 
-        Callable<LocalTime> Start = () -> {
-            LocalTime start1 = LocalTime.now();
-            System.out.println(start1);
-            System.out.println("Cekam 10 sek i zwracam integer 45 (callable) na wątku :" + Thread.currentThread().getName());
-            TimeUnit.SECONDS.sleep(10);
-            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
-            return start1;
-        };
+//        Runnable runnable = () -> {
+//            // treść kodu do wykonania
+//        };   wersja Runnable przez lambde
 
-        Callable<Integer> answerToEverything = () -> {
-            System.out.println("Cekam 10 sek i zwracam integer 45 (callable) na wątku :" + Thread.currentThread().getName());
-            TimeUnit.SECONDS.sleep(10);
-            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
-            return 45;
-        };
+//        CompletableFuture.runAsync(runnable);
+//        deklaracja pełna
+//        poniżej skrócona deklaracja przez lambde
 
-        Callable<Integer> anoterAnswerToEverything = () -> {
-            System.out.println("Cekam 13 sek i zwracam integer 55 (callable2) na wątku :" + Thread.currentThread().getName());
-            TimeUnit.SECONDS.sleep(13);
-            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
-            return 55;
-        };
+        CompletableFuture.runAsync(() -> {
+                    System.out.println("Wykonanie runAsync w wątku: " + Thread.currentThread().getName());
+                    try {
+                        TimeUnit.SECONDS.sleep(2);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("Zrobiłem wszystko w runAsync wątku: " + Thread.currentThread().getName());
+                },executor
+        );
 
-        Callable<Integer> finalAnswerToEverything = () -> {
-            System.out.println("Cekam 5 sek i zwracam integer 65 (callable2) na wątku :" + Thread.currentThread().getName());
-            TimeUnit.SECONDS.sleep(5);
-            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
-            return 65;
-        };
+        CompletableFuture<String> przekazane = CompletableFuture.supplyAsync(() -> {
+               System.out.println("Wykonanie supplyAsync w wątku: " + Thread.currentThread().getName());
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+               System.out.println("Zrobiłem wszystko supplyAsync w wątku: " + Thread.currentThread().getName());
+            return "Skończyłem";
+        },executor);
+
+        System.out.println(przekazane.get());
+
+
+        CompletableFuture.runAsync(() -> {
+                    System.out.println("Wykonanie runAsync2 w wątku: " + Thread.currentThread().getName());
+                    try {
+                        TimeUnit.SECONDS.sleep(13);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("Zrobiłem wszystko w runAsync2 wątku: " + Thread.currentThread().getName());
+                },executor
+        );
+
+        CompletableFuture<String> przekazane2 = CompletableFuture.supplyAsync(() -> {
+            System.out.println("Wykonanie supplyAsync w wątku: " + Thread.currentThread().getName());
+            try {
+                TimeUnit.SECONDS.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Zrobiłem wszystko supplyAsync w wątku: " + Thread.currentThread().getName());
+            return "Skończyłem2";
+        },executor);
+
+        System.out.println(przekazane2.get());
+
+
+//   Pełny zapis CompletableFuture.supplyAsync:
+//        CompletableFuture<String> przekazane = CompletableFuture.supplyAsync(new Supplier<String>() {
+//            @Override
+//            public String get() {
+//             //   System.out.println("Wykonanie supplyAsync w wątku: " + Thread.currentThread().getName());
+//                try {
+//                    TimeUnit.SECONDS.sleep(5);
+//                } catch (InterruptedException e) {
+//                    System.out.println("to tu?");
+//                    e.printStackTrace();
+//                }
+//             //   System.out.println("Zrobiłem wszystko supplyAsync w wątku: " + Thread.currentThread().getName());
+//                return "Skończyłem";
+//            }
+//        });
+
+
+
+//        Callable<Integer> answerToEverything = () -> {
+//            System.out.println("Czekam 10 sek i zwracam integer 45 (callable) na wątku :" + Thread.currentThread().getName());
+//            TimeUnit.SECONDS.sleep(10);
+//            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
+//            return 45;
+//        };
+//
+//        Future r1 = executor.submit(answerToEverything);
+//        System.out.println(r1.get());
+
+//
+//        Callable<Integer> anoterAnswerToEverything = () -> {
+//            System.out.println("Czekam 13 sek i zwracam integer 55 (callable2) na wątku :" + Thread.currentThread()
+//            .getName());
+//            TimeUnit.SECONDS.sleep(13);
+//            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
+//            return 55;
+//        };
+//
+//        Callable<Integer> finalAnswerToEverything = () -> {
+//            System.out.println("Czekam 5 sek i zwracam integer 65 (callable2) na wątku :" + Thread.currentThread()
+//            .getName());
+//            TimeUnit.SECONDS.sleep(5);
+//            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
+//            return 65;
+//        };
 /*  //invokeAll
         List<Callable<Integer>> callableList = Arrays.asList(answerToEverything,
                 anoterAnswerToEverything,
@@ -387,13 +554,13 @@ public class Main {
         }
 */   //invokeAny
 
-        List<Callable<Integer>> callableList = Arrays.asList(answerToEverything,
-                anoterAnswerToEverything,
-                finalAnswerToEverything);
-
-        Integer result = executor.invokeAny(callableList);
-
-        System.out.println(result);
+//        List<Callable<Integer>> callableList = Arrays.asList(answerToEverything,
+//                anoterAnswerToEverything,
+//                finalAnswerToEverything);
+//
+//        Integer result = executor.invokeAny(callableList);
+//
+//        System.out.println(result);
 
 
 
@@ -407,10 +574,148 @@ public class Main {
         System.out.println(r3.get());
 */
 
-        long stopTime = System.currentTimeMillis();
-        System.out.println("Czas wykonania: " + ((stopTime - startTime) / 1000) + "s");
+
         executor.shutdown();
+        long stopTime = System.currentTimeMillis();
+        System.out.println("Czas wykonania: " + ((stopTime - startTime) / 1000) + " s  --> " + Thread.currentThread().getName());
+
         //  executor.shutdownNow();  //kończy natychmiast wszystko poprzez wyjatek "InterruptedException"
 
     }
+
+
+////-------------------------------------------------------------------------------------------------------------------
+//
+////---------------------------------------EXECUTOR WĄTKÓW CompletableFuture.runAsync  i  supplyAsync--------------------
+////------------------------------------- kolejka wątków za pomocą Callable ------ExecutorSERVICE--------------------
+//    // supplyAsync  przerywa działanie trwających wątków, przekazuje dne i koniec, chyba że przepuścimy go przez
+//    // executora, wtedy wszystkie wątki dobiegają do końca. (ciekawe)
+//    //
+//    //
+//    //
+//    //
+//    //
+//
+//    long startTime = System.currentTimeMillis();
+//    LocalTime start = LocalTime.now();
+//        System.out.println(start);
+//        System.out.println("Główny wątek aplikacji  --> " + Thread.currentThread().getName());
+//
+//    ExecutorService executor = Executors.newFixedThreadPool(5);
+//
+////        Runnable runnable = new Runnable() {
+////            @Override
+////            public void run() {
+////                // treść kodu do wykonania
+////            }
+////        };   pełna deklaracja Runnable
+//
+////        Runnable runnable = () -> {
+////            // treść kodu do wykonania
+////        };   wersja Runnable przez lambde
+//
+////        CompletableFuture.runAsync(runnable);
+////        deklaracja pełna
+////        poniżej skrócona deklaracja przez lambde
+//
+//        CompletableFuture.runAsync(() -> {
+//        System.out.println("Wykonanie runAsync w wątku: " + Thread.currentThread().getName());
+//        try {
+//            TimeUnit.SECONDS.sleep(5);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println("Zrobiłem wszystko w runAsync wątku: " + Thread.currentThread().getName());
+//    },executor
+//        );
+//
+//    CompletableFuture<String> przekazane = CompletableFuture.supplyAsync(() -> {
+//        System.out.println("Wykonanie supplyAsync w wątku: " + Thread.currentThread().getName());
+//        try {
+//            TimeUnit.SECONDS.sleep(3);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println("Zrobiłem wszystko supplyAsync w wątku: " + Thread.currentThread().getName());
+//        return "Skończyłem";
+//    },executor);
+//
+//        System.out.println(przekazane.get());
+//
+//
+////   Pełny zapis CompletableFuture.supplyAsync:
+////        CompletableFuture<String> przekazane = CompletableFuture.supplyAsync(new Supplier<String>() {
+////            @Override
+////            public String get() {
+////             //   System.out.println("Wykonanie supplyAsync w wątku: " + Thread.currentThread().getName());
+////                try {
+////                    TimeUnit.SECONDS.sleep(5);
+////                } catch (InterruptedException e) {
+////                    System.out.println("to tu?");
+////                    e.printStackTrace();
+////                }
+////             //   System.out.println("Zrobiłem wszystko supplyAsync w wątku: " + Thread.currentThread().getName());
+////                return "Skończyłem";
+////            }
+////        });
+//
+//
+//
+////        Callable<Integer> answerToEverything = () -> {
+////            System.out.println("Cekam 10 sek i zwracam integer 45 (callable) na wątku :" + Thread.currentThread().getName());
+////            TimeUnit.SECONDS.sleep(10);
+////            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
+////            return 45;
+////        };
+////
+////        Callable<Integer> anoterAnswerToEverything = () -> {
+////            System.out.println("Cekam 13 sek i zwracam integer 55 (callable2) na wątku :" + Thread.currentThread().getName());
+////            TimeUnit.SECONDS.sleep(13);
+////            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
+////            return 55;
+////        };
+////
+////        Callable<Integer> finalAnswerToEverything = () -> {
+////            System.out.println("Cekam 5 sek i zwracam integer 65 (callable2) na wątku :" + Thread.currentThread().getName());
+////            TimeUnit.SECONDS.sleep(5);
+////            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
+////            return 65;
+////        };
+///*  //invokeAll
+//        List<Callable<Integer>> callableList = Arrays.asList(answerToEverything,
+//                anoterAnswerToEverything,
+//                finalAnswerToEverything);
+//        List<Future<Integer>> futures = executor.invokeAll(callableList);
+//        for (Future<Integer> f : futures) {
+//            System.out.println(f.get());
+//        }
+//*/   //invokeAny
+//
+////        List<Callable<Integer>> callableList = Arrays.asList(answerToEverything,
+////                anoterAnswerToEverything,
+////                finalAnswerToEverything);
+////
+////        Integer result = executor.invokeAny(callableList);
+////
+////        System.out.println(result);
+//
+//
+//
+//
+///*  //tradycyjny sposób 13 s
+//        Future r1 = executor.submit(answerToEverything);
+//        Future r2 = executor.submit(anoterAnswerToEverything);
+//        Future r3 = executor.submit(finalAnswerToEverything);
+//        System.out.println(r1.get());
+//        System.out.println(r2.get());
+//        System.out.println(r3.get());
+//*/
+//
+//    long stopTime = System.currentTimeMillis();
+//        System.out.println("Czas wykonania: " + ((stopTime - startTime) / 1000) + " s  --> " + Thread.currentThread().getName());
+//        executor.shutdown();
+//    //  executor.shutdownNow();  //kończy natychmiast wszystko poprzez wyjatek "InterruptedException"
+//
+//}
+
 }
