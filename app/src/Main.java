@@ -281,14 +281,14 @@ public class Main {
 
         Callable<Integer> answerToEverything = () -> {
             System.out.println("Cekam 10 sek i zwracam integer 45 (callable) na wątku :" + Thread.currentThread().getName());
-            TimeUnit.SECONDS.sleep(10);
+            TimeUnit.SECONDS.sleep(2);
             System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
             return 45;
         };
 
         Callable<Integer> callable2 = () -> {
             System.out.println("Cekam 2 sek i zwracam integer 55 (callable2) na wątku :" + Thread.currentThread().getName());
-            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(8);
             System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
             return 55;
         };
@@ -300,14 +300,17 @@ public class Main {
             System.out.println("Czekam na dane 1");
             TimeUnit.SECONDS.sleep(1);
         }
-        while (!result2.isDone()) {
-            System.out.println("Czekam na dane 2");
-            TimeUnit.SECONDS.sleep(1);
-        }
+
         //executor.submit(worker1);
         Integer przekazana = result.get();
         System.out.println("Zwrócona wartość z wątku callable wynisi: " + przekazana);
-        Integer przekazana2 = result2.get();
+        Integer przekazana2 = null;
+        try {
+            przekazana2 = result2.get(4, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            System.out.println("Zabrakło czasu na odebranie danej przekazywana2");
+            e.printStackTrace();
+        }
         System.out.println("Zwrócona wartość z wątku callable2 wynisi: " + przekazana2);
 
         executor.shutdown();
