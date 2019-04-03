@@ -221,8 +221,12 @@ public class Main {
 
 //---------------------------------------EXECUTOR WĄTKÓW Callable-----------------------------------------------------
 //------------------------------------- kolejka wątków za pomocą Callable ------ScheduledExecutor--------------------
-        // wątke zwraca wartość do wykorzystania opóźniej po obiekcie klasy Future
+        // wątke zwraca wartość do wykorzystania opóźniej po objekcie klasy Future
         // callabe wstrzymuje realizację na innych wątkach aż sam nie skończy pracy.
+        // chyba że użyjemy while (!result.isDone()) {} gdzie w pętli wykonamy coś równolegle do wątku callable.
+        // tyle że jeżeli w pętli zapuścimy wątek to on się zapętla i wykonuje cały czas nawet po otrzymaniu future
+        // poza tym zapętla się na obu wykorzystywanych wątkach.
+        // gdy wykonamy coś na main wątku to działa OK.
 
         System.out.println("Główny wątek 1 aplikacji : " + Thread.currentThread().getName());
 
@@ -279,14 +283,18 @@ public class Main {
             return 45;
         };
 
-        executor.submit(worker3);
         Future<Integer> result = executor.submit(answerToEverything);
+
+        while (!result.isDone()) {
+          //  System.out.println("Główny wątek 2 aplikacji : " + Thread.currentThread().getName());
+            System.out.println("Brak przekazanej");
+            TimeUnit.SECONDS.sleep(1);
+         //   System.out.println("Główny wątek 3 aplikacji : " + Thread.currentThread().getName());
+         //   executor.submit(worker3);
+        }
+        executor.submit(worker3);
         Integer przekazana = result.get();
         System.out.println("Zwrócona wartość z wątku callable wynisi: " + przekazana);
-        System.out.println("Główny wątek 2 aplikacji : " + Thread.currentThread().getName());
-        executor.submit(worker2);
-        System.out.println("Główny wątek 3 aplikacji : " + Thread.currentThread().getName());
-        executor.submit(worker3);
 
         executor.shutdown();
         //  executor.shutdownNow();  //kończy natychmiast wszystko poprzez wyjatek "InterruptedException"
