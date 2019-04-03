@@ -244,15 +244,18 @@ public class Main {
             }
         };
 
-        Runnable worker2 = () -> {
-            try {
-                System.out.println("Robotnik 2 - Aktualny wątek o nazwie: " + Thread.currentThread().getName());
-                System.out.println("Ładuję zapas pożywienia na wątku: " + Thread.currentThread().getName());
-                TimeUnit.SECONDS.sleep(5);
-                System.out.println("Załadowałem żywność na wątku: " + Thread.currentThread().getName());
-            } catch (InterruptedException e) {
-                System.out.println("Tutaj przerywa działanie shutdownNow");
-                e.printStackTrace();
+        Runnable worker2 = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    System.out.println("Robotnik 2 - Aktualny wątek o nazwie: " + Thread.currentThread().getName());
+                    System.out.println("Ładuję zapas pożywienia na wątku: " + Thread.currentThread().getName());
+                    TimeUnit.SECONDS.sleep(5);
+                    System.out.println("Załadowałem żywność na wątku: " + Thread.currentThread().getName());
+                } catch (InterruptedException e) {
+                    System.out.println("Tutaj przerywa działanie shutdownNow");
+                    e.printStackTrace();
+                }
             }
         };
 
@@ -283,18 +286,29 @@ public class Main {
             return 45;
         };
 
+        Callable<Integer> callable2 = () -> {
+            System.out.println("Cekam 2 sek i zwracam integer 55 (callable2) na wątku :" + Thread.currentThread().getName());
+            TimeUnit.SECONDS.sleep(2);
+            System.out.println("Zrobione!!! wątek : " + Thread.currentThread().getName());
+            return 55;
+        };
+
         Future<Integer> result = executor.submit(answerToEverything);
+        Future<Integer> result2 = executor.submit(callable2);
 
         while (!result.isDone()) {
-          //  System.out.println("Główny wątek 2 aplikacji : " + Thread.currentThread().getName());
-            System.out.println("Brak przekazanej");
+            System.out.println("Czekam na dane 1");
             TimeUnit.SECONDS.sleep(1);
-         //   System.out.println("Główny wątek 3 aplikacji : " + Thread.currentThread().getName());
-         //   executor.submit(worker3);
         }
-        executor.submit(worker3);
+        while (!result2.isDone()) {
+            System.out.println("Czekam na dane 2");
+            TimeUnit.SECONDS.sleep(1);
+        }
+        //executor.submit(worker1);
         Integer przekazana = result.get();
         System.out.println("Zwrócona wartość z wątku callable wynisi: " + przekazana);
+        Integer przekazana2 = result2.get();
+        System.out.println("Zwrócona wartość z wątku callable2 wynisi: " + przekazana2);
 
         executor.shutdown();
         //  executor.shutdownNow();  //kończy natychmiast wszystko poprzez wyjatek "InterruptedException"
