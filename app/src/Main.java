@@ -1,6 +1,7 @@
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.SortedMap;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -691,141 +692,214 @@ public class Main {
         // bez możliwości dodania jakiś operacji w supplyAsync.
         // thenCombine jest OK.
         //
+//
+//        startTime = System.currentTimeMillis();
+//        System.out.println("Główny wątek aplikacji  --> " + Thread.currentThread().getName());
+//
+//        ExecutorService executor = Executors.newFixedThreadPool(5);
+//
+////        CompletableFuture<String> userNameFuture = CompletableFuture.supplyAsync(() -> {
+////            System.out.println("Wykonanie zapytanie do zewnętrznego serwisu o Roberta w wątku: " + Thread.currentThread().getName());
+////            try {
+////                TimeUnit.SECONDS.sleep(2);
+////            } catch (InterruptedException e) {
+////                e.printStackTrace();
+////            }
+////            jakisTime = System.currentTimeMillis();
+////            System.out.println("Wykonałem zapytanie w tym wątku: " + Thread.currentThread().getName()
+////                    + " zajęło mi to : " + (jakisTime - startTime) / 1000 + " s");
+////            return getName();
+////        });
+//
+//
+////        CompletableFuture<String> userNameFuture2 = CompletableFuture.supplyAsync(() -> {
+////            System.out.println("Wykonanie zapytanie do zewnętrznego serwisu o Mariana w wątku: " + Thread.currentThread().getName());
+////            try {
+////                TimeUnit.SECONDS.sleep(2);
+////            } catch (InterruptedException e) {
+////                e.printStackTrace();
+////            }
+////            jakisTime = System.currentTimeMillis();
+////            System.out.println("Wykonałem zapytanie w tym wątku: " + Thread.currentThread().getName()
+////                    + " zajęło mi to : " + (jakisTime - startTime) / 1000 + " s");
+////            return getName2();
+////        });
+//
+//        CompletableFuture<Long> userIdFuture = CompletableFuture.supplyAsync(() -> {
+//            System.out.println("Wykonanie zapytanie do zewnętrznego serwisu o userID w wątku: " + Thread.currentThread().getName());
+//            try {
+//                TimeUnit.SECONDS.sleep(2);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            jakisTime = System.currentTimeMillis();
+//            System.out.println("Wykonałem zapytanie i znam userID w wątku: " + Thread.currentThread().getName()
+//                    + " zajęło mi to : " + (jakisTime - startTime) / 1000 + " s");
+//            return getUserId();
+//        },executor);
+//
+//        CompletableFuture<Long> userIdFuture2 = CompletableFuture.supplyAsync(() -> {
+//            System.out.println("Wykonanie zapytanie do zewnętrznego serwisu o userID w wątku: " + Thread.currentThread().getName());
+//            try {
+//                TimeUnit.SECONDS.sleep(5);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            jakisTime = System.currentTimeMillis();
+//            System.out.println("Wykonałem zapytanie i znam userID w wątku: " + Thread.currentThread().getName()
+//                    + " zajęło mi to : " + (jakisTime - startTime) / 1000 + " s");
+//            return getUserId2();
+//        },executor);
+//
+////        userNameFuture.thenCombine(userNameFuture2, new BiFunction<String, String, Object>() {
+////                    @Override
+////                    public Object apply(String aLong, String aLong2) {
+////                        return null;
+////                    }
+////                });
+//
+//        CompletableFuture completableFuture = userIdFuture.thenCombine(userIdFuture2, new BiFunction<Long, Long, Object>() {
+//                    @Override
+//                    public Object apply(Long userLongFuture, Long useLongFuture2) {
+//                        jakisTime = System.currentTimeMillis();
+//                        System.out.println("Dokonałem przeliczenia i wyszło " +(userLongFuture * useLongFuture2)
+//                                + " w wątku: " + Thread.currentThread().getName()
+//                                + " zajęło mi to : " + (jakisTime - startTime) / 1000 + " s");
+//                        return userLongFuture * useLongFuture2;
+//                    }
+//                }).thenAccept(aLong -> System.out.println("Wartość wynosi : " + aLong + " wyliczona w thenAccept"));
+//
+//        //pełna wersja, poniżej
+//        // to samo ale z lambdą
+//
+//       // Long aLong = (Long) completableFuture.get();
+//
+////        userIdFuture.thenCombine(userIdFuture2, (userLongFuture, useLongFuture2) -> {
+////            return userLongFuture * useLongFuture2;
+////        });  // poniżej lambda
+//
+////        Long aLong = userIdFuture.thenCombine(userIdFuture2,
+////                (userLongFuture, useLongFuture2) -> userLongFuture * useLongFuture2).get();
+//
+//       // System.out.println(aLong);
+//
+//
+///*  wywołanie poporzątkowane
+//        CompletableFuture<Void> future = userIdFuture.thenCompose(userId ->
+//                CompletableFuture.supplyAsync(() -> getDiscount(userId)).thenAccept(discount -> {
+//                    System.out.println("Wykonałem operacje thenCompose na wątku: " + Thread.currentThread().getName());
+//                    System.out.print("Dyskount wynosi: " + discount);
+//                    jakisTime = System.currentTimeMillis();
+//                    System.out.println("  zajęło mi to : " + (jakisTime - startTime) / 1000 + " s");
+//                })
+//        );
+//
+//        future.get();
+//*/
+//
+//        // String wynik = przekazane.get();
+//
+//        // System.out.println(wynik + " --> " + Thread.currentThread().getName());
+//
+//
+//        executor.shutdown();
+//        stopTime = System.currentTimeMillis();
+//        System.out.println("Czas wykonania wątku głównego: " + ((stopTime - startTime) / 1000) + " s  --> " + Thread.currentThread().getName());
+//
+//    }
+//
+//    public static Long getUserId() {
+//        return 324L;
+//    }
+//
+//    public static Long getUserId2() {
+//        return 2L;
+//    }
+//
+//    public static String getName() {
+//        return "Robert";
+//    }
+//
+//    public static String getName2() {
+//        return "Marian";
+//    }
+//
+//    public static Double getDiscount(Long userId) {
+//        if (userId == 324L) return 0.15;
+//        return 0.00;
+//    }
+
+//-------------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------EXECUTOR WĄTKÓW CompletableFuture obsłuba błędów --------------------
+//--------------------------------------------------------------------------------------------------------------
+        // exceptionally - metoda obsługuje wyjatek i pozwala wysłać defoltową wartość danych.
+        // poza tym można tą metodą obsłużyć również CompletableFuture.runAsync tylko w return dajemy null
+        // bo metoda runAsync niczego nie przekazuje i działa.
+        //
 
         startTime = System.currentTimeMillis();
         System.out.println("Główny wątek aplikacji  --> " + Thread.currentThread().getName());
 
         ExecutorService executor = Executors.newFixedThreadPool(5);
 
-//        CompletableFuture<String> userNameFuture = CompletableFuture.supplyAsync(() -> {
-//            System.out.println("Wykonanie zapytanie do zewnętrznego serwisu o Roberta w wątku: " + Thread.currentThread().getName());
-//            try {
-//                TimeUnit.SECONDS.sleep(2);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            jakisTime = System.currentTimeMillis();
-//            System.out.println("Wykonałem zapytanie w tym wątku: " + Thread.currentThread().getName()
-//                    + " zajęło mi to : " + (jakisTime - startTime) / 1000 + " s");
-//            return getName();
-//        });
+        final boolean err = true;
+
+        CompletableFuture.runAsync(() -> {
+                    System.out.println("Wykonanie runAsync w wątku: " + Thread.currentThread().getName());
+                    try {
+                        TimeUnit.SECONDS.sleep(3);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (err) {
+                        System.out.println("!!! przerywam działanie wątku runAsync : " + Thread.currentThread().getName());
+                        throw new IllegalArgumentException("Wrong argument!!!");
+                    }
+                    System.out.println("Zrobiłem wszystko w runAsync wątku: " + Thread.currentThread().getName());
+                }, executor
+        ).exceptionally(exe -> {
+            System.out.println("błąd -- " + exe.getMessage());
+            return null;
+        }).thenAccept(s -> {
+            jakisTime = System.currentTimeMillis();
+            System.out.println("Ten wątek " + Thread.currentThread().getName() + " trwał: " + (jakisTime - startTime) / 1000 + " s");
+        });
 
 
-//        CompletableFuture<String> userNameFuture2 = CompletableFuture.supplyAsync(() -> {
-//            System.out.println("Wykonanie zapytanie do zewnętrznego serwisu o Mariana w wątku: " + Thread.currentThread().getName());
-//            try {
-//                TimeUnit.SECONDS.sleep(2);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            jakisTime = System.currentTimeMillis();
-//            System.out.println("Wykonałem zapytanie w tym wątku: " + Thread.currentThread().getName()
-//                    + " zajęło mi to : " + (jakisTime - startTime) / 1000 + " s");
-//            return getName2();
-//        });
-
-        CompletableFuture<Long> userIdFuture = CompletableFuture.supplyAsync(() -> {
-            System.out.println("Wykonanie zapytanie do zewnętrznego serwisu o userID w wątku: " + Thread.currentThread().getName());
+        // CompletableFuture<String> przekazane = //enter
+        CompletableFuture.supplyAsync(() -> {
+            System.out.println("Wykonanie supplyAsync w wątku: " + Thread.currentThread().getName());
             try {
                 TimeUnit.SECONDS.sleep(2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            jakisTime = System.currentTimeMillis();
-            System.out.println("Wykonałem zapytanie i znam userID w wątku: " + Thread.currentThread().getName()
-                    + " zajęło mi to : " + (jakisTime - startTime) / 1000 + " s");
-            return getUserId();
-        },executor);
-
-        CompletableFuture<Long> userIdFuture2 = CompletableFuture.supplyAsync(() -> {
-            System.out.println("Wykonanie zapytanie do zewnętrznego serwisu o userID w wątku: " + Thread.currentThread().getName());
-            try {
-                TimeUnit.SECONDS.sleep(5);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if (err) {
+                System.out.println("!!! przerywam działanie wątku supplyAsync : " + Thread.currentThread().getName());
+                throw new IllegalArgumentException("Zły argument czyli wrong argument.");
             }
+            System.out.println("Zrobiłem wszystko supplyAsync w wątku: " + Thread.currentThread().getName());
+            return "Skończyłem";
+        }, executor).exceptionally(exception -> {
+            System.out.println("ERROR!!!" + exception.getMessage());
+            return "Skończone";
+        }).thenApply(s -> {
+                    s = s.replace("S", "Wy");
+                    //System.out.println(s + " --> " + Thread.currentThread().getName());
+                    return s;
+                }
+        ).thenAccept(s -> {
+            System.out.println(s + " --> " + Thread.currentThread().getName());
             jakisTime = System.currentTimeMillis();
-            System.out.println("Wykonałem zapytanie i znam userID w wątku: " + Thread.currentThread().getName()
-                    + " zajęło mi to : " + (jakisTime - startTime) / 1000 + " s");
-            return getUserId2();
-        },executor);
-
-//        userNameFuture.thenCombine(userNameFuture2, new BiFunction<String, String, Object>() {
-//                    @Override
-//                    public Object apply(String aLong, String aLong2) {
-//                        return null;
-//                    }
-//                });
-
-        CompletableFuture completableFuture = userIdFuture.thenCombine(userIdFuture2, new BiFunction<Long, Long, Object>() {
-                    @Override
-                    public Object apply(Long userLongFuture, Long useLongFuture2) {
-                        jakisTime = System.currentTimeMillis();
-                        System.out.println("Dokonałem przeliczenia i wyszło " +(userLongFuture * useLongFuture2)
-                                + " w wątku: " + Thread.currentThread().getName()
-                                + " zajęło mi to : " + (jakisTime - startTime) / 1000 + " s");
-                        return userLongFuture * useLongFuture2;
-                    }
-                }).thenAccept(aLong -> System.out.println("Wartość wynosi : " + aLong + " wyliczona w thenAccept"));
-
-        //pełna wersja, poniżej
-        // to samo ale z lambdą
-
-       // Long aLong = (Long) completableFuture.get();
-
-//        userIdFuture.thenCombine(userIdFuture2, (userLongFuture, useLongFuture2) -> {
-//            return userLongFuture * useLongFuture2;
-//        });  // poniżej lambda
-
-//        Long aLong = userIdFuture.thenCombine(userIdFuture2,
-//                (userLongFuture, useLongFuture2) -> userLongFuture * useLongFuture2).get();
-
-       // System.out.println(aLong);
-
-
-/*  wywołanie poporzątkowane
-        CompletableFuture<Void> future = userIdFuture.thenCompose(userId ->
-                CompletableFuture.supplyAsync(() -> getDiscount(userId)).thenAccept(discount -> {
-                    System.out.println("Wykonałem operacje thenCompose na wątku: " + Thread.currentThread().getName());
-                    System.out.print("Dyskount wynosi: " + discount);
-                    jakisTime = System.currentTimeMillis();
-                    System.out.println("  zajęło mi to : " + (jakisTime - startTime) / 1000 + " s");
-                })
-        );
-
-        future.get();
-*/
-
-        // String wynik = przekazane.get();
-
-        // System.out.println(wynik + " --> " + Thread.currentThread().getName());
+            System.out.println("Ten wątek " + Thread.currentThread().getName() + " trwał: " + (jakisTime - startTime) / 1000 + " s");
+        });
 
 
         executor.shutdown();
         stopTime = System.currentTimeMillis();
         System.out.println("Czas wykonania wątku głównego: " + ((stopTime - startTime) / 1000) + " s  --> " + Thread.currentThread().getName());
 
-    }
-
-    public static Long getUserId() {
-        return 324L;
-    }
-
-    public static Long getUserId2() {
-        return 2L;
-    }
-
-    public static String getName() {
-        return "Robert";
-    }
-
-    public static String getName2() {
-        return "Marian";
-    }
-
-    public static Double getDiscount(Long userId) {
-        if (userId == 324L) return 0.15;
-        return 0.00;
     }
 
 }
